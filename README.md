@@ -119,7 +119,7 @@ Open `http://localhost:8000` for the chat UI or `http://localhost:8000/docs` for
 ## Pinecone Index Setup
 
 Create your index at [app.pinecone.io](https://app.pinecone.io) with:
-- **Dimension:** 768
+- **Dimension:** 3072
 - **Metric:** cosine
 - **Cloud:** AWS, Region: us-east-1
 
