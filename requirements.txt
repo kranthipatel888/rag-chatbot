@@ -20,8 +20,8 @@ asyncpg==0.31.0
 fastapi==0.139.0
 uvicorn==0.51.0
 pydantic==2.13.4
-pydantic[email]
-python-multipart
+email-validator==2.3.0
+python-multipart==0.0.20
 
 # Utilities
 python-dotenv==1.2.2
