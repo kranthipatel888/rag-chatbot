@@ -82,7 +82,7 @@ Response:
 |----------|-------------|
 | `GOOGLE_API_KEY` | Gemini API key — [get one here](https://aistudio.google.com/app/apikey) |
 | `PINECONE_API_KEY` | Pinecone API key — [app.pinecone.io](https://app.pinecone.io) |
-| `PINECONE_INDEX_NAME` | Name of your Pinecone index (dimension: 768, metric: cosine) |
+| `PINECONE_INDEX_NAME` | Name of your Pinecone index (dimension: 3072, metric: cosine) |
 | `DATABASE_URL` | Neon connection string (`postgresql://...?sslmode=require`) |
 
 For local Postgres instead of Neon, you can use individual vars:
