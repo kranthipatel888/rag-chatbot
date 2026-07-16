@@ -1,0 +1,17 @@
+langchain>=0.3.0
+langchain-community>=0.3.0
+langchain-google-genai>=2.0.0
+langchain-pinecone>=0.2.0
+pinecone-client>=4.0.0
+python-dotenv>=1.0.0
+langchain-text-splitters>=0.3.0
+
+# Phase 2 — database
+sqlalchemy>=2.0.0
+asyncpg>=0.29.0
+
+# Phase 3 — API server
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+pydantic[email]>=2.0.0
+python-multipart>=0.0.9

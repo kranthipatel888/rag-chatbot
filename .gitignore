@@ -1,0 +1,19 @@
+# Environment
+.env
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# ChromaDB (local, not needed in production)
+chroma_db/
+
+# Data files (ingest separately, don't commit to repo)
+data/
+
+# IDE
+.vscode/
+.idea/
