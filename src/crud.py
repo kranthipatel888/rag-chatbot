@@ -41,12 +41,3 @@ async def get_history(db: AsyncSession, user_id: int) -> list[Message]:
     )
     return list(result.scalars().all())
 
-
-# async def get_sessions_by_email(db: AsyncSession, email: str) -> list[ChatSession]:
-#     """Return all sessions for a given email, newest first."""
-#     result = await db.execute(
-#         select(ChatSession)
-#         .where(ChatSession.email == email)
-#         .order_by(ChatSession.created_at.desc())
-#     )
-#     return list(result.scalars().all())

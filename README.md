@@ -55,6 +55,7 @@ rag-chatbot/
 
 ### POST `/api/chat`
 
+Request:
 ```json
 {
   "email": "you@example.com",
@@ -62,7 +63,18 @@ rag-chatbot/
 }
 ```
 
-Response includes `answer`, `sources`, `session_id`, and full `history`.
+Response:
+```json
+{
+  "email": "you@example.com",
+  "answer": "...",
+  "sources": ["data/pricing_tiers.md"],
+  "history": [
+    { "role": "user", "content": "What are your pricing tiers?" },
+    { "role": "bot", "content": "..." }
+  ]
+}
+```
 
 ## Environment Variables
 
