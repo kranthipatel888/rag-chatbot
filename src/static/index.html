@@ -18,7 +18,6 @@
       justify-content: center;
     }
 
-    /* ---------- Login Screen ---------- */
     #login-screen {
       display: flex;
       flex-direction: column;
@@ -29,17 +28,8 @@
       padding: 20px;
     }
 
-    #login-screen h1 {
-      font-size: 1.6rem;
-      font-weight: 700;
-      color: #ffffff;
-    }
-
-    #login-screen p {
-      font-size: 0.9rem;
-      color: #888;
-      text-align: center;
-    }
+    #login-screen h1 { font-size: 1.6rem; font-weight: 700; color: #ffffff; }
+    #login-screen p { font-size: 0.9rem; color: #888; text-align: center; }
 
     #login-screen input {
       width: 100%;
@@ -52,7 +42,6 @@
       outline: none;
       transition: border 0.2s;
     }
-
     #login-screen input:focus { border-color: #6c63ff; }
 
     #login-screen button {
@@ -67,17 +56,14 @@
       cursor: pointer;
       transition: background 0.2s;
     }
-
     #login-screen button:hover { background: #574fd6; }
 
-    /* ---------- Chat Screen ---------- */
     #chat-screen {
       display: none;
       flex-direction: column;
       width: 100%;
       max-width: 720px;
       height: 100vh;
-      padding: 0;
     }
 
     #chat-header {
@@ -97,7 +83,6 @@
       padding: 4px 10px;
       border-radius: 20px;
     }
-
     #chat-header button {
       background: none;
       border: none;
@@ -108,7 +93,6 @@
     }
     #chat-header button:hover { color: #fff; }
 
-    /* ---------- Messages ---------- */
     #messages {
       flex: 1;
       overflow-y: auto;
@@ -125,7 +109,6 @@
       flex-direction: column;
       max-width: 80%;
     }
-
     .msg.user { align-self: flex-end; align-items: flex-end; }
     .msg.bot  { align-self: flex-start; align-items: flex-start; }
 
@@ -135,6 +118,7 @@
       font-size: 0.92rem;
       line-height: 1.55;
       word-break: break-word;
+      white-space: pre-wrap;
     }
 
     .msg.user .bubble {
@@ -142,12 +126,23 @@
       color: #fff;
       border-bottom-right-radius: 4px;
     }
-
     .msg.bot .bubble {
       background: #1e1e30;
       color: #e0e0e0;
       border-bottom-left-radius: 4px;
       border: 1px solid #2a2a3a;
+    }
+
+    /* Blinking cursor while streaming */
+    .streaming .bubble::after {
+      content: "▋";
+      display: inline-block;
+      animation: blink 0.8s step-start infinite;
+      color: #6c63ff;
+      margin-left: 2px;
+    }
+    @keyframes blink {
+      50% { opacity: 0; }
     }
 
     .sources {
@@ -157,14 +152,12 @@
       padding: 0 4px;
     }
 
-    /* ---------- Typing indicator ---------- */
     .typing .bubble {
       display: flex;
       gap: 5px;
       align-items: center;
       padding: 14px 18px;
     }
-
     .dot {
       width: 7px; height: 7px;
       background: #6c63ff;
@@ -173,13 +166,11 @@
     }
     .dot:nth-child(2) { animation-delay: 0.2s; }
     .dot:nth-child(3) { animation-delay: 0.4s; }
-
     @keyframes bounce {
       0%, 80%, 100% { transform: translateY(0); }
       40%            { transform: translateY(-6px); }
     }
 
-    /* ---------- Input bar ---------- */
     #input-bar {
       display: flex;
       gap: 10px;
@@ -205,7 +196,6 @@
       font-family: inherit;
       line-height: 1.4;
     }
-
     #input-bar textarea:focus { border-color: #6c63ff; }
 
     #send-btn {
@@ -221,11 +211,9 @@
       align-items: center;
       justify-content: center;
     }
-
     #send-btn:hover { background: #574fd6; }
     #send-btn:disabled { background: #3a3a5a; cursor: not-allowed; }
 
-    /* ---------- Error toast ---------- */
     #toast {
       position: fixed;
       bottom: 80px;
@@ -243,7 +231,6 @@
 </head>
 <body>
 
-  <!-- Login -->
   <div id="login-screen">
     <h1>🤖 RAG Chatbot</h1>
     <p>Enter your email to start chatting. Your conversation history is saved.</p>
@@ -251,7 +238,6 @@
     <button onclick="startChat()">Start Chatting</button>
   </div>
 
-  <!-- Chat -->
   <div id="chat-screen">
     <div id="chat-header">
       <span class="title">🤖 RAG Chatbot</span>
@@ -270,13 +256,9 @@
   <script>
     let userEmail = "";
 
-    // ---------- Login ----------
     function startChat() {
       const email = document.getElementById("email-input").value.trim();
-      if (!email || !email.includes("@")) {
-        showToast("Please enter a valid email.");
-        return;
-      }
+      if (!email || !email.includes("@")) { showToast("Please enter a valid email."); return; }
       userEmail = email;
       document.getElementById("header-email").textContent = email;
       document.getElementById("login-screen").style.display = "none";
@@ -292,19 +274,17 @@
       document.getElementById("login-screen").style.display = "flex";
     }
 
-    // ---------- Load history on login ----------
     async function loadHistory() {
       try {
         const res = await fetch(`/api/history/email/${encodeURIComponent(userEmail)}`);
-        if (res.status === 404) return; // new user, no history
+        if (res.status === 404) return;
         if (!res.ok) return;
         const messages = await res.json();
         messages.forEach(m => appendBubble(m.role === "user" ? "user" : "bot", m.content));
         scrollToBottom();
-      } catch (e) { /* silently skip */ }
+      } catch (e) {}
     }
 
-    // ---------- Send message ----------
     async function sendMessage() {
       const input = document.getElementById("question-input");
       const question = input.value.trim();
@@ -314,29 +294,69 @@
       input.value = "";
       input.style.height = "46px";
 
-      const typingEl = appendTyping();
       const sendBtn = document.getElementById("send-btn");
       sendBtn.disabled = true;
 
+      // Create bot bubble for streaming into
+      const botDiv = document.createElement("div");
+      botDiv.className = "msg bot streaming";
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      botDiv.appendChild(bubble);
+      document.getElementById("messages").appendChild(botDiv);
+      scrollToBottom();
+
       try {
-        const res = await fetch("/api/chat", {
+        const res = await fetch("/api/chat/stream", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email: userEmail, question }),
         });
 
-        typingEl.remove();
-
         if (!res.ok) {
           const err = await res.json();
+          botDiv.remove();
           showToast(err.detail || "Something went wrong.");
           return;
         }
 
-        const data = await res.json();
-        appendBubble("bot", data.answer, data.sources);
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split("\n");
+          buffer = lines.pop(); // keep incomplete line
+
+          for (const line of lines) {
+            if (!line.startsWith("data: ")) continue;
+            const payload = JSON.parse(line.slice(6));
+
+            if (payload.token) {
+              bubble.textContent += payload.token;
+              scrollToBottom();
+            }
+
+            if (payload.done) {
+              // Remove streaming cursor
+              botDiv.classList.remove("streaming");
+
+              // Append sources if any
+              if (payload.sources && payload.sources.length > 0) {
+                const src = document.createElement("div");
+                src.className = "sources";
+                src.textContent = "Sources: " + payload.sources
+                  .map(s => s.split(/[\\/]/).pop()).join(", ");
+                botDiv.appendChild(src);
+              }
+            }
+          }
+        }
       } catch (e) {
-        typingEl.remove();
         showToast("Network error. Is the server running?");
       } finally {
         sendBtn.disabled = false;
@@ -344,34 +364,20 @@
       }
     }
 
-    // ---------- Helpers ----------
     function appendBubble(role, text, sources = []) {
       const msgs = document.getElementById("messages");
       const div = document.createElement("div");
       div.className = `msg ${role}`;
-
       const bubble = document.createElement("div");
       bubble.className = "bubble";
       bubble.textContent = text;
       div.appendChild(bubble);
-
       if (sources.length > 0) {
         const src = document.createElement("div");
         src.className = "sources";
         src.textContent = "Sources: " + sources.map(s => s.split(/[\\/]/).pop()).join(", ");
         div.appendChild(src);
       }
-
-      msgs.appendChild(div);
-      scrollToBottom();
-      return div;
-    }
-
-    function appendTyping() {
-      const msgs = document.getElementById("messages");
-      const div = document.createElement("div");
-      div.className = "msg bot typing";
-      div.innerHTML = `<div class="bubble"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
       msgs.appendChild(div);
       scrollToBottom();
       return div;
@@ -389,22 +395,15 @@
       setTimeout(() => { toast.style.display = "none"; }, 3000);
     }
 
-    // Send on Enter (Shift+Enter for new line)
     document.addEventListener("DOMContentLoaded", () => {
       const ta = document.getElementById("question-input");
       ta.addEventListener("keydown", e => {
-        if (e.key === "Enter" && !e.shiftKey) {
-          e.preventDefault();
-          sendMessage();
-        }
+        if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
       });
-      // Auto-grow textarea
       ta.addEventListener("input", () => {
         ta.style.height = "46px";
         ta.style.height = Math.min(ta.scrollHeight, 120) + "px";
       });
-
-      // Allow Enter on email input
       document.getElementById("email-input").addEventListener("keydown", e => {
         if (e.key === "Enter") startChat();
       });
